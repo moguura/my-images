@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声認識アウトプット活動</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #slide-container {
+            position: relative; /* 相対位置指定 */
+        }
+        img {
+            max-width: 90%;
+            height: auto;
+        }
+        .overlay-image {
+            position: absolute; /* 絶対位置指定 */
+            top: 20px; /* 上からの位置 */
+            left: 20px; /* 左からの位置 */
+            z-index: 10; /* 重なり順 */
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #mic-button img {
+            width: 50px; /* マイク画像の幅を指定 */
+            height: auto; /* 高さは自動調整 */
+        }
+        #mic-button {
+            display: none; /* 初期は非表示 */
+        }
+    </style>
+</head>
+<body>
+
+<div id="slide-container">
+    <img id="slide" src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%891.JPG" alt="スライド">
+    <img id="overlay" class="overlay-image" src="" alt="オーバーレイ画像" style="display:none;">
+    <button id="next-button">進む</button>
+</div>
+
+<div id="mic-button">
+    <img src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%9E%E3%82%A4%E3%82%AF%E8%B5%A4.jpg" alt="マイクボタン" onclick="startRecognition()">
+</div>
+
+<script>
+    const slides = [
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%891.JPG",
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%892.JPG",
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%893.JPG",
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%894.JPG"
+    ];
+    
+    const additionalImages = [
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E5%95%8F%E9%A1%8C1%E4%BE%8B%E3%81%AE%E6%8C%87%E7%A4%BA%EF%BC%91.png",
+        "https://raw.githubusercontent.com/moguura/my-images/main/%E3%81%84%E3%81%84%E3%81%A8%E8%A8%80%E3%81%A3%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84.png"
+    ];
+
+    let currentSlideIndex = 0;
+
+    document.getElementById('next-button').addEventListener('click', function() {
+        currentSlideIndex++;
+        
+        if (currentSlideIndex < slides.length) {
+            document.getElementById('slide').src = slides[currentSlideIndex];
+            
+            if (currentSlideIndex === 1) {
+                document.getElementById('overlay').src = additionalImages[0];
+                document.getElementById('overlay').style.display = 'block'; // 追加画像を表示
+            } else if (currentSlideIndex === 2) {
+                document.getElementById('overlay').src = additionalImages[1];
+                document.getElementById('overlay').style.display = 'block'; // 追加画像を表示
+                document.getElementById('mic-button').style.display = 'block'; // マイクボタンを表示
+            } else if (currentSlideIndex >= slides.length) {
+                alert("スライドが終了しました。");
+                return; // スライドが終了した場合
+            }
+        }
+    });
+
+    function startRecognition() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        
+        recognition.lang = 'ja-JP';
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+
+            if (transcript.includes("いいです")) {
+                alert("正解です！");
+                // 正解の画像と音声を表示
+                document.getElementById('slide').src = "https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%9E%E3%83%A9.png";
+                const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E6%AD%A3%E8%A7%A32.mp3");
+                audio.play();
+            } else {
+                alert("不正解です。");
+                // 不正解の画像と音声を表示
+                document.getElementById('slide').src = "https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%90%E3%83%84.png";
+                const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E4%B8%8D%E6%B0%B8%E8%B5%B0.mp3");
+                audio.play();
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.error("Recognition error:", event.error);
+        };
+    }
+</script>
+
+</body>
+</html>
