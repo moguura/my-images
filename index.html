@@ -14,14 +14,27 @@
             margin: 0;
             background-color: #f0f0f0;
         }
+        #slide-container {
+            position: relative; /* 相対位置指定 */
+        }
         img {
             max-width: 90%;
             height: auto;
+        }
+        .overlay-image {
+            position: absolute; /* 絶対位置指定 */
+            top: 20px; /* 上からの位置 */
+            left: 20px; /* 左からの位置 */
+            z-index: 10; /* 重なり順 */
         }
         button {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
+        }
+        #mic-button img {
+            width: 50px; /* マイク画像の幅を指定 */
+            height: auto; /* 高さは自動調整 */
         }
         #mic-button {
             display: none; /* 初期は非表示 */
@@ -32,11 +45,11 @@
 
 <div id="slide-container">
     <img id="slide" src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%891.JPG" alt="スライド">
+    <img id="overlay" class="overlay-image" src="" alt="オーバーレイ画像" style="display:none;">
     <button id="next-button">進む</button>
 </div>
 
-<div id="additional-image" style="display:none;"></div>
-<div id="mic-button" style="display:none;">
+<div id="mic-button">
     <img src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%9E%E3%82%A4%E3%82%AF%E8%B5%A4.jpg" alt="マイクボタン" onclick="startRecognition()">
 </div>
 
@@ -62,11 +75,11 @@
             document.getElementById('slide').src = slides[currentSlideIndex];
             
             if (currentSlideIndex === 1) {
-                document.getElementById('additional-image').innerHTML = `<img src="${additionalImages[0]}" alt="追加画像">`;
-                document.getElementById('additional-image').style.display = 'block';
+                document.getElementById('overlay').src = additionalImages[0];
+                document.getElementById('overlay').style.display = 'block'; // 追加画像を表示
             } else if (currentSlideIndex === 2) {
-                document.getElementById('additional-image').innerHTML = `<img src="${additionalImages[1]}" alt="追加画像">`;
-                document.getElementById('additional-image').style.display = 'block';
+                document.getElementById('overlay').src = additionalImages[1];
+                document.getElementById('overlay').style.display = 'block'; // 追加画像を表示
                 document.getElementById('mic-button').style.display = 'block'; // マイクボタンを表示
             } else if (currentSlideIndex >= slides.length) {
                 alert("スライドが終了しました。");
@@ -94,7 +107,7 @@
                 alert("不正解です。");
                 // 不正解の画像と音声を表示
                 document.getElementById('slide').src = "https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%90%E3%83%84.png";
-                const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E4%B8%8D%E6%AD%A3%E8%A7%A31.mp3");
+                const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E4%B8%8D%E6%B0%B8%E8%B5%B0.mp3");
                 audio.play();
             }
         };
