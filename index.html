@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF音声認識問題</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #pdfViewer { width: 100%; height: 600px; }
+    </style>
+</head>
+<body>
+    <h1>音声認識問題</h1>
+    <p>以下のPDFの4ページ目で「いいです」と言ってください。</p>
+    
+    <!-- PDF表示 -->
+    <iframe id="pdfViewer" src="https://docs.google.com/gview?url=https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B31.pdf&embedded=true"></iframe>
+
+    <!-- 音声認識ボタン -->
+    <button id="startButton">音声を話す</button>
+    <div id="result"></div>
+
+    <!-- 音声再生ボタン -->
+    <button id="playAudioButton" style="display:none;">音声を再生</button>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const resultDiv = document.getElementById('result');
+        const playAudioButton = document.getElementById('playAudioButton');
+
+        startButton.addEventListener('click', () => {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'ja-JP';
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                resultDiv.textContent = `あなたの発言: ${transcript}`;
+                
+                // 「いいです」と言った場合、音声再生ボタンを表示
+                if (transcript === 'いいです') {
+                    playAudioButton.style.display = 'block';
+                } else {
+                    playAudioButton.style.display = 'none';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                resultDiv.textContent = 'エラーが発生しました。';
+            };
+        });
+
+        playAudioButton.addEventListener('click', () => {
+            const audio = new Audio('https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%BA%E6%AD%A3%E8%A7%A32.mp3');
+            audio.play();
+        });
+    </script>
+</body>
+</html>
