@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音声認識アウトプット活動</title>
     <style>
         body {
             display: flex;
@@ -33,11 +32,16 @@
             font-size: 16px;
         }
         #mic-button img {
-            width: 50px; /* マイク画像の幅を指定 */
+            width: 70px; /* マイク画像の幅を少し大きめに指定 */
             height: auto; /* 高さは自動調整 */
+            position: absolute; /* 絶対位置指定 */
+            top: 50%; /* スライド中央に配置 */
+            left: 50%; /* スライド中央に配置 */
+            transform: translate(-50%, -50%); /* 中央揃え */
         }
-        #mic-button {
-            display: none; /* 初期は非表示 */
+        #next-button img {
+            width: 60px; /* ボタン画像の幅を指定 */
+            height: auto; /* 高さは自動調整 */
         }
     </style>
 </head>
@@ -46,10 +50,12 @@
 <div id="slide-container">
     <img id="slide" src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%891.JPG" alt="スライド">
     <img id="overlay" class="overlay-image" src="" alt="オーバーレイ画像" style="display:none;">
-    <button id="next-button">進む</button>
+    <div id="next-button" style="position:absolute; bottom:10px; right:10px;">
+        <img src="https://raw.githubusercontent.com/moguura/my-images/main/%E6%AC%A1%E3%81%AB%E8%A1%8C%E3%81%8F.png" alt="進むボタン" onclick="goToNextSlide()">
+    </div>
 </div>
 
-<div id="mic-button">
+<div id="mic-button" style="display:none;">
     <img src="https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%9E%E3%82%A4%E3%82%AF%E8%B5%A4.jpg" alt="マイクボタン" onclick="startRecognition()">
 </div>
 
@@ -68,7 +74,7 @@
 
     let currentSlideIndex = 0;
 
-    document.getElementById('next-button').addEventListener('click', function() {
+    function goToNextSlide() {
         currentSlideIndex++;
         
         if (currentSlideIndex < slides.length) {
@@ -86,7 +92,7 @@
                 return; // スライドが終了した場合
             }
         }
-    });
+    }
 
     function startRecognition() {
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -98,13 +104,13 @@
             const transcript = event.results[0][0].transcript;
 
             if (transcript.includes("いいです")) {
-                alert("正解です！");
+                alert("OK");
                 // 正解の画像と音声を表示
                 document.getElementById('slide').src = "https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%9E%E3%83%A9.png";
                 const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E6%AD%A3%E8%A7%A32.mp3");
                 audio.play();
             } else {
-                alert("不正解です。");
+                alert("ざんねん");
                 // 不正解の画像と音声を表示
                 document.getElementById('slide').src = "https://raw.githubusercontent.com/moguura/my-images/main/%E3%83%90%E3%83%84.png";
                 const audio = new Audio("https://raw.githubusercontent.com/moguura/my-images/main/%E3%82%AF%E3%82%A4%E3%82%B8%E4%B8%8D%E6%B0%B8%E8%B5%B0.mp3");
